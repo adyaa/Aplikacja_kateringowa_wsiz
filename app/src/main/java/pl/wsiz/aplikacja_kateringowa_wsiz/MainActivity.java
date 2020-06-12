@@ -5,13 +5,18 @@ import com.google.firebase.auth.FirebaseUser;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.accounts.Account;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 import com.google.firebase.FirebaseAppLifecycleListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import dmax.dialog.SpotsDialog;
 import io.reactivex.disposables.CompositeDisposable;
@@ -61,17 +66,42 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
                 if (user != null) {
-                    //Account is already logged in
-                    CheckUserFromFirebase(user);
+                    //Konto jest aktualnie zalogowane
+                    CheckUserFromFirebase(user.getUid(),account);
                 } else {
                     phoneLogIn();
                 }
             }
         };
     }
+    //sprawdzanie czy istnieje już taki użytkownik
+    private void CheckUserFromFirebase(String uid, Account account) {
+        userRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    Toast.makeText(MainActivity.this,"Jesteś już zarejestrowany", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    showRegisterDialog(uid,account);
+                }
+            }
 
-    private void CheckUserFromFirebase(FirebaseUser user) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            Toast.makeText(MainActivity.this, ""+databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+    private void showRegisterDialog(String uid, Account account) {
+
+
+
+    }
+
 
     private void phoneLogIn() {
 
