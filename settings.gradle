@@ -1,0 +1,2 @@
+rootProject.name='Aplikacja_kateringowa_wsiz'
+include ':app'
