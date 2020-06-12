@@ -10,8 +10,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 import com.google.firebase.FirebaseAppLifecycleListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import dmax.dialog.SpotsDialog;
 import io.reactivex.disposables.CompositeDisposable;
+import pl.wsiz.aplikacja_kateringowa_wsiz.Common.Common;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -21,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener listener;
     private AlertDialog dialog;
     private CompositeDisposable disposable = new CompositeDisposable();
+
+    private DatabaseReference userRef;
 
     @Override
     protected void onStart() {
@@ -46,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Init() {
+        userRef = FirebaseDatabase.getInstance().getReference(Common.USER_REFERENCES);
         firebaseAuth = FirebaseAuth.getInstance();
         dialog = new SpotsDialog.Builder().setCancelable(false).setContext(this).build();
         listener = new FirebaseAuth.AuthStateListener() {
